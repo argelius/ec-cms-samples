@@ -1,0 +1,23 @@
+body {
+  padding: 20px;
+}
+
+.mushrooms {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mushroom {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  max-width: 250px;
+}
+
+.mushroom h2 {
+  margin: 0;
+}
+
+.mushroom img {
+  width: 250px;
+}
