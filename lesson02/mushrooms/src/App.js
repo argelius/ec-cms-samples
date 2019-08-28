@@ -12,21 +12,26 @@ function renderMushroom(mushroom) {
       {mushroom.poisonous === "1" ? (
         <strong style={{ color: "red" }}>Giftig!</strong>
       ) : null}
-      {mushroom.rating && mushroom.poisonous === "0" ? `Smak: ${mushroom.rating}` : null}
-      <div className="mushroom-sn"><em>{mushroom.scientific_name}</em></div>
+      {mushroom.rating && mushroom.poisonous === "0"
+        ? `Smak: ${mushroom.rating}`
+        : null}
+      <div className="mushroom-sn">
+        <em>{mushroom.scientific_name}</em>
+      </div>
       <img alt={mushroom.name} src={`${COCKPIT_ROOT}/${mushroom.image.path}`} />
       <p>{mushroom.description}</p>
       {mushroom.similar_species ? (
         <div>
           <h3>Förväxlingssvampar</h3>
           <ul>
-            {mushroom.similar_species.map(mushroom => mushroom.display)}
+            {mushroom.similar_species.map(mushroom => (
+              <li key={mushroom._id}>{mushroom.display}</li>
+            ))}
           </ul>
         </div>
       ) : null}
     </div>
   );
-  return mushroom.name;
 }
 
 function App() {
@@ -35,35 +40,47 @@ function App() {
   const [sort, setSort] = useState("name");
   const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    let qs = `sort[${sort}]=${sort === "rating" ? -1 : 1}`;
+  useEffect(
+    () => {
+      let qs = `sort[${sort}]=${sort === "rating" ? -1 : 1}`;
 
-    if (query) {
-      qs += `&filter[name][$regex]=${query}`;
-    }
+      if (query) {
+        qs += `&filter[name][$regex]=${query}`;
+      }
 
-    if (onlyPoisonous) {
-      qs += "&filter[poisonous]=1";
-    }
+      if (onlyPoisonous) {
+        qs += "&filter[poisonous]=1";
+      }
 
-    axios
-      .get(`${COCKPIT_ROOT}/api/collections/get/mushrooms?${qs}`)
-      .then(response => {
-        setMushrooms(response.data.entries);
-      });
-  }, [query, onlyPoisonous, sort]);
+      axios
+        .get(`${COCKPIT_ROOT}/api/collections/get/mushrooms?${qs}`)
+        .then(response => {
+          setMushrooms(response.data.entries);
+        });
+    },
+    [query, onlyPoisonous, sort]
+  );
 
   return (
     <>
       <h1>Svampar</h1>
       <p>
         <label>
-          <input value={query} type="text" onChange={e => setQuery(e.target.value)} placeholder="Sök..." />
+          <input
+            value={query}
+            type="text"
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Sök..."
+          />
         </label>
       </p>
       <p>
         <label>
-          <input value={onlyPoisonous} type="checkbox" onChange={() => setOnlyPoisonous(!onlyPoisonous)} />
+          <input
+            value={onlyPoisonous}
+            type="checkbox"
+            onChange={() => setOnlyPoisonous(!onlyPoisonous)}
+          />
           Visa endast giftiga svampar
         </label>
       </p>
