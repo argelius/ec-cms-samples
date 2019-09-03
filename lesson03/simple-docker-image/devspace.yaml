@@ -1,0 +1,29 @@
+version: v1beta2
+images:
+  default:
+    image: dscr.io/${DEVSPACE_USERNAME}/devspace
+    createPullSecret: true
+deployments:
+- name: simple-docker-image
+  component:
+    containers:
+    - image: dscr.io/${DEVSPACE_USERNAME}/devspace
+    service:
+      ports:
+      - port: 80
+dev:
+  overrideImages:
+  - name: default
+    entrypoint:
+    - sleep
+    - "999999999999"
+  ports:
+  - labelSelector:
+      app.kubernetes.io/component: simple-docker-image
+    forward:
+    - port: 80
+  sync:
+  - labelSelector:
+      app.kubernetes.io/component: simple-docker-image
+    excludePaths:
+    - node_modules
